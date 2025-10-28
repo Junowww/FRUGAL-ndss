@@ -1,4 +1,4 @@
-# FRUGAL: Website Fingerprinting Defense Framework
+# FRUGAL
 
 ## Project Structure
 
