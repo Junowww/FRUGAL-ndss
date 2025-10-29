@@ -60,7 +60,7 @@ class SACAgent:
             else:
                 for j in range(n):
                     if max_index[j] >= tra_len:
-                        probs[max_index[j]] = float('-inf')
+                        probs[max_index[j]] = 0.001
                         dist = torch.distributions.Categorical(probs)
                         max_index = dist.sample((n,))
         action = max_index
