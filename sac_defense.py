@@ -60,9 +60,8 @@ class SACAgent:
             else:
                 for j in range(n):
                     if max_index[j] >= tra_len:
-                        probs[max_index[j]] = 0.001
-                        dist = torch.distributions.Categorical(probs)
-                        max_index = dist.sample((n,))
+                        probs[max_index[j]] = float('-inf')
+                        max_index = torch.topk(probs, n, largest=True, sorted=True)[1]
         action = max_index
 
         for j in range(n):
