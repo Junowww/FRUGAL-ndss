@@ -84,8 +84,9 @@ class Environment():
         (loss / max_features).backward()
 
         if i % max_features == 0:
-            opt.step()
-            opt.zero_grad()
+            self.mi_optimizer.step()
+            self.mi_optimizer.zero_grad()
+
 
 
 
