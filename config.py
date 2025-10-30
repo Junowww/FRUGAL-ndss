@@ -21,8 +21,9 @@ q_policy_model_path = './saved_trained_models/sac_models/df_0716-bwo0.3weights_s
 MI_model_path = './saved_trained_models/df_cw.pth'
 conv_model_path = './saved_trained_models/state_encoder.pth' # for 95 websites
 DF_model_path = './saved_trained_models/df_cw.pth'
-VarCNN_model_path = './saved_trained_models/var_cw.pth'
+VarCNN_model_path = './saved_trained_models/varcnn_cw.pth'
 TF_model_path = './saved_trained_models/tf_cw.pth'
 NetCLR_model_path = './saved_trained_models/net_cw.pth'
 AWF_model_path = './saved_trained_models/awf_cw.pth'
 # RF_model_path = './saved_trained_models/rf_cw_3d_new.pth'
+
