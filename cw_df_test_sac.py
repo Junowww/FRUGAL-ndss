@@ -8,7 +8,7 @@ import argparse
 from utility import *
 from config import *
 
-def dqn_test_in_cw(agent, env, traffic, traffic_idx, i, bwo_para, nb_classes):
+def dqn_test_in_cw(agent, env, traffic, traffic_idx, i, nb_classes, bwo_para):
     t = 0
     done = False
     ori_max_index = env.get_ori_label(traffic_idx)
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     netCLR = load_model('NetCLR', NetCLR_model_path, args.nb_classes, args.device)
 
     attack_net = load_model(args.attack_model, MI_model_path, args.nb_classes, args.device)
-    agent = SACAgent(state_dim, hidden_dim, action_dim, conv_net, ACTOR_LR, CRITIC_LR, ALPHA_LR, BATCH_SIZE, TAU, GAMMA, args.nb_classes, args.device)
+    agent = SACAgent(state_dim, hidden_dim, action_dim, conv_net, ACTOR_LR, CRITIC_LR, ALPHA_LR, BATCH_SIZE, TAU, GAMMA, args.device)
     agent.load_q_model(q_policy_model_path)
     env = Environment(attack_net)
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         b_x = b_x.to(args.device, non_blocking=True)
         b_y = b_y.to(args.device, non_blocking=True)
         _, ori_max_index = torch.max(b_y.data, dim=-1)
-        traffic, bwo = dqn_test_in_cw(agent, env, b_x, b_y, i, args.bwo_para)
+        traffic, bwo = dqn_test_in_cw(agent, env, b_x, b_y, i, args.nb_classes, args.bwo_para)
         bwo_total += bwo
         ori_max_index = ori_max_index.tolist()
         b_x_1 = b_x.repeat(2, 1, 1)
