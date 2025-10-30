@@ -8,7 +8,7 @@ import argparse
 from utility import *
 from config import *
 
-def dqn_test_in_cw(agent, env, traffic, traffic_idx, i, mode, bwo_para):
+def dqn_test_in_cw(agent, env, traffic, traffic_idx, i, mode, bwo_para, nb_classes):
     t = 0
     done = False
     ori_max_index = env.get_ori_label(traffic_idx)
@@ -22,7 +22,7 @@ def dqn_test_in_cw(agent, env, traffic, traffic_idx, i, mode, bwo_para):
         t += 1
         modified_traffic, action = agent.single_trace_mutate(traffic)
         done = env.check_done(modified_traffic, traffic_idx)
-        still_in_prob, feedback_new = env.get_single_trace_environment_feedback(modified_traffic, traffic_idx, num=82)
+        feedback_new, still_in_prob, reward2 = env.get_single_trace_environment_feedback(modified_traffic, traffic_idx, nb_classes)
         reward = 1 - still_in_prob.item()
         total_reward = feedback_new
         reward_sum += reward
@@ -110,7 +110,7 @@ if __name__ == "__main__":
         b_x = b_x.to(args.device)
         b_y = b_y.to(args.device)
         _, ori_max_index = torch.max(b_y.data, dim=-1)
-        traffic, bwo = dqn_test_in_cw(agent, env, b_x, b_y, i, args.test_mode, args.bwo_para)
+        traffic, bwo = dqn_test_in_cw(agent, env, b_x, b_y, i, args.test_mode, args.bwo_para, args.nb_classes)
         bwo_total += bwo
         ori_max_index = ori_max_index.tolist()
         b_x_1 = b_x.repeat(2, 1, 1)
