@@ -17,7 +17,6 @@ class BufferArray:
         self.action_idx = self.state_idx + action_dim
 
     def add_memo(self, memo_tuple):
-        # 将张量统一转为 numpy 后再入库，避免混合类型造成额外开销或错误
         numpy_memo = [m.detach().cpu().numpy() if isinstance(m, torch.Tensor) else m for m in memo_tuple]
         self.memories[self.next_idx] = np.hstack(numpy_memo)
         self.next_idx = self.next_idx + 1
@@ -33,7 +32,6 @@ class BufferArray:
         indices = rd.randint(self.now_len, size=batch_size)
 
         memory = self.memories[indices]
-        # 先从 numpy 创建 pinned tensor，再异步拷贝到设备，减少传输开销
         memory_tensor = torch.from_numpy(memory).pin_memory()
         memory = memory_tensor.to(device, non_blocking=True)
 
