@@ -48,10 +48,12 @@ class SACAgent:
 
     def single_trace_mutate(self, traffic, n=5):
         probs = self.take_action(traffic)
-        temp_x = traffic.cpu()
-        dist = torch.distributions.Categorical(probs)
-        max_index = dist.sample((n,))
-        ori_tra_len = np.count_nonzero(temp_x[0, :])
+        ori_tra_len = int(torch.count_nonzero(traffic[0, :]).item())
+        # print("probs: ", probs.shape)
+        # dist = torch.distributions.Categorical(probs)
+        # max_index = dist.sample((n,))
+        max_index = torch.topk(probs, n, largest=True, sorted=True)[1]
+        # print("max_index: ", max_index)
         tra_len = ori_tra_len // 5
 
         while (True):
@@ -78,8 +80,7 @@ class SACAgent:
 
     def single_trace_mutate_test(self, traffic, n=5):
         probs = self.take_action(traffic)
-        temp_x = traffic.cpu()
-        ori_tra_len = np.count_nonzero(temp_x[0, :])
+        ori_tra_len = int(torch.count_nonzero(traffic[0, :]).item())
         tra_len = ori_tra_len // 5
 
         _, max_index = torch.topk(probs, n, largest=True, sorted=True)
@@ -125,13 +126,11 @@ class SACAgent:
         next_states = experiences[4]
 
         td_target = self.calc_target(rewards, next_states, masks)
-        critic_1_q_values = torch.zeros(32, 1).to(self.device)
-        critic_2_q_values = torch.zeros(32, 1).to(self.device)
-        for i in range(self.batch_size):
-            for j in range(n):
-                index = int(actions[i][j].item())
-                critic_1_q_values[i] += self.critic_1(states[i])[index]
-                critic_2_q_values[i] += self.critic_2(states[i])[index]
+        q1_all = self.critic_1(states)  # [B, A]
+        q2_all = self.critic_2(states)  # [B, A]
+        gather_indices = actions.long().to(self.device)  # [B, n]
+        critic_1_q_values = q1_all.gather(1, gather_indices).sum(dim=1, keepdim=True)
+        critic_2_q_values = q2_all.gather(1, gather_indices).sum(dim=1, keepdim=True)
         critic_1_loss = torch.mean(F.mse_loss(critic_1_q_values, td_target.detach()))
         critic_2_loss = torch.mean(F.mse_loss(critic_2_q_values, td_target.detach()))
         self.critic_1_optimizer.zero_grad()
@@ -158,9 +157,9 @@ class SACAgent:
         self.log_alpha_optimizer.step()
 
     def soft_update(self):
-        for param_target, param in zip(self.critic_1.parameters(), self.target_critic_1.parameters()):
+        for param_target, param in zip(self.target_critic_1.parameters(), self.critic_1.parameters()):
             param_target.data.copy_(param_target.data * (1.0 - self.tau) + param.data * self.tau)
-        for param_target, param in zip(self.critic_2.parameters(), self.target_critic_2.parameters()):
+        for param_target, param in zip(self.target_critic_2.parameters(), self.critic_2.parameters()):
             param_target.data.copy_(param_target.data * (1.0 - self.tau) + param.data * self.tau)
 
 
