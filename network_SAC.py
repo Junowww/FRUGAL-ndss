@@ -12,7 +12,7 @@ class PolicyNet(torch.nn.Module):
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
-        return F.softmax(self.fc2(x), dim=0)
+        return F.softmax(self.fc2(x), dim=-1)
 
 
 class QValueNet(torch.nn.Module):
