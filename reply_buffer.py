@@ -17,8 +17,9 @@ class BufferArray:
         self.action_idx = self.state_idx + action_dim
 
     def add_memo(self, memo_tuple):
+        # 将张量统一转为 numpy 后再入库，避免混合类型造成额外开销或错误
         numpy_memo = [m.detach().cpu().numpy() if isinstance(m, torch.Tensor) else m for m in memo_tuple]
-        self.memories[self.next_idx] = np.hstack(memo_tuple)
+        self.memories[self.next_idx] = np.hstack(numpy_memo)
         self.next_idx = self.next_idx + 1
         if self.next_idx >= self.max_len:
             self.is_full = True
@@ -28,15 +29,13 @@ class BufferArray:
         self.now_len = self.max_len if self.is_full else self.next_idx
 
     def random_sample(self, batch_size, device):
-        # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-        # indices = rd.choice(self.memo_len, batch_size, replace=False)  # why perform worse?
-        # indices = rd.choice(self.memo_len, batch_size, replace=True)  # why perform better?
         # same as:
         indices = rd.randint(self.now_len, size=batch_size)
 
         memory = self.memories[indices]
-        memory = torch.tensor(memory, device=device)
+        # 先从 numpy 创建 pinned tensor，再异步拷贝到设备，减少传输开销
+        memory_tensor = torch.from_numpy(memory).pin_memory()
+        memory = memory_tensor.to(device, non_blocking=True)
 
         '''convert array into torch.tensor'''
         tensors = (
