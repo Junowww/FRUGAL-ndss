@@ -8,11 +8,11 @@ import argparse
 from utility import *
 from config import *
 
-def dqn_test_in_cw(agent, env, traffic, traffic_idx, i, mode, bwo_para, nb_classes):
+def dqn_test_in_cw(agent, env, traffic, traffic_idx, i, bwo_para, nb_classes):
     t = 0
     done = False
     ori_max_index = env.get_ori_label(traffic_idx)
-    ori_len = np.count_nonzero(traffic.cpu())
+    ori_len = int(torch.count_nonzero(traffic[0, :]).item())
     reward_sum = 0
     done_num = 0
     bwo = 0
@@ -23,7 +23,7 @@ def dqn_test_in_cw(agent, env, traffic, traffic_idx, i, mode, bwo_para, nb_class
         modified_traffic, action = agent.single_trace_mutate(traffic)
         done = env.check_done(modified_traffic, traffic_idx)
         feedback_new, still_in_prob, reward2 = env.get_single_trace_environment_feedback(modified_traffic, traffic_idx, nb_classes)
-        reward = 1 - still_in_prob.item()
+        reward = 1 - still_in_prob
         total_reward = feedback_new
         reward_sum += reward
         reward_avg = reward_sum / t
@@ -68,12 +68,13 @@ def load_model(modelname, modelpath, nb_classes, device):
     return model
 
 def get_pred_label(trace, model, acc_count, ori_max_index):
-    output = model(trace)
-    probs = torch.softmax(output[1], dim=-1)
-    pred_label = torch.max(probs, 0)[1].data
-    pre_label = pred_label.tolist()
-    if pre_label == ori_max_index:
-        acc_count += 1
+    with torch.no_grad():
+        output = model(trace)
+        probs = torch.softmax(output[1], dim=-1)
+        pred_label = torch.max(probs, 0)[1].data
+        pre_label = pred_label.tolist()
+        if pre_label == ori_max_index:
+            acc_count += 1
     return acc_count
 
 
@@ -95,7 +96,7 @@ if __name__ == "__main__":
     netCLR = load_model('NetCLR', NetCLR_model_path, args.nb_classes, args.device)
 
     attack_net = load_model(args.attack_model, MI_model_path, args.nb_classes, args.device)
-    agent = SACAgent(state_dim, hidden_dim, action_dim, conv_net, ACTOR_LR, CRITIC_LR, ALPHA_LR, BATCH_SIZE, TAU, GAMMA, args.device)
+    agent = SACAgent(state_dim, hidden_dim, action_dim, conv_net, ACTOR_LR, CRITIC_LR, ALPHA_LR, BATCH_SIZE, TAU, GAMMA, args.nb_classes, args.device)
     agent.load_q_model(q_policy_model_path)
     env = Environment(attack_net)
 
@@ -107,10 +108,10 @@ if __name__ == "__main__":
     bwo_total = 0
     bwo_avg = 0
     for i,(b_x, b_y) in enumerate(test_data):
-        b_x = b_x.to(args.device)
-        b_y = b_y.to(args.device)
+        b_x = b_x.to(args.device, non_blocking=True)
+        b_y = b_y.to(args.device, non_blocking=True)
         _, ori_max_index = torch.max(b_y.data, dim=-1)
-        traffic, bwo = dqn_test_in_cw(agent, env, b_x, b_y, i, args.test_mode, args.bwo_para, args.nb_classes)
+        traffic, bwo = dqn_test_in_cw(agent, env, b_x, b_y, i, args.bwo_para)
         bwo_total += bwo
         ori_max_index = ori_max_index.tolist()
         b_x_1 = b_x.repeat(2, 1, 1)
