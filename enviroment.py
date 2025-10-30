@@ -7,6 +7,8 @@ class Environment():
     def __init__(self, attack_net):
         super(Environment, self).__init__()
         self.attack_net = attack_net
+        self.mi_optimizer = torch.optim.Adam(self.attack_net.parameters(), lr=1e-3)
+        self.mi_loss_fn = torch.nn.CrossEntropyLoss()
 
     def get_single_trace_attackmodel_result(self, x_sample, y_sample):
         self.attack_net.eval()
@@ -72,8 +74,6 @@ class Environment():
     def MI_update(self, traffic, traffic_idx, i, max_features=5):
         predictor = self.attack_net
         predictor.train()
-        opt = optim.Adam(predictor.parameters(), lr=1e-3)
-        loss_fn = torch.nn.CrossEntropyLoss()
         predictor.zero_grad()
 
         # estimator update
@@ -86,6 +86,7 @@ class Environment():
         if i % max_features == 0:
             opt.step()
             opt.zero_grad()
+
 
 
 
