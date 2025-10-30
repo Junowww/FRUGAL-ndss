@@ -23,7 +23,6 @@ def single_trace_train_agent(agent, env, ori_traffic, ori_label, i, reward_scale
         t += 1
         modified_traffic, action = agent.single_trace_mutate(ori_traffic)
         next_state = agent.get_state(modified_traffic)
-        # 应基于最新的 modified_traffic 检查是否完成
         done = env.check_done(modified_traffic, ori_label)
         max_prob, still_in_prob, reward2 = env.get_single_trace_environment_feedback(modified_traffic, ori_label, nb_classes)
         reward = 1 - still_in_prob
@@ -49,13 +48,6 @@ def load_goodsample(limits):
     gs_dataset = MyDataset(X_goodSample, y_goodSample)
     gs_data = WholeDatasetIterator(gs_dataset)
     return gs_data
-
-def load_train_data():
-    X_train, y_train = LoadDataNoDefCW()
-    X_train = X_train[:, np.newaxis, :]
-    train_dataset = MyDataset(X_train, y_train)
-    train_data = WholeDatasetIterator(train_dataset)
-    return train_data
 
 def load_model(modelname, modelpath, nb_classes, device):
     if modelname == 'conv_net':
@@ -87,8 +79,7 @@ if __name__ == "__main__":
     parser.add_argument('--nb_classes', type=int, default=95, help='number of classes')
     args = parser.parse_args()
 
-    # gs_data = load_goodsample(args.limits)
-    gs_data = load_train_data()
+    gs_data = load_goodsample(args.limits)
     print("conv_model_path:", conv_model_path)  
     conv_net = load_model('conv_net', conv_model_path, args.nb_classes, args.device)
 
@@ -116,3 +107,4 @@ if __name__ == "__main__":
     env.attack_net.to('cpu')
     # torch.save(env.attack_net.state_dict(), './saved_trained_models/MIestimator_{}_{}weights_sac_ongs{}.pth'.format(args.attack_model, args.subdir, args.limits))
     print("Training progress ends.")
+
