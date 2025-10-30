@@ -107,6 +107,3 @@ if __name__ == "__main__":
     env.attack_net.to('cpu')
     # torch.save(env.attack_net.state_dict(), './saved_trained_models/MIestimator_{}_{}weights_sac_ongs{}.pth'.format(args.attack_model, args.subdir, args.limits))
     print("Training progress ends.")
-
-if __name__ == "__main__":
-    main()
