@@ -80,12 +80,13 @@ class Environment():
         traffic = traffic.reshape((1, 1, traffic.shape[1]))
         traffic = traffic.repeat(2, 1, 1)
         pred = predictor(traffic)
-        loss = loss_fn(pred[0], torch.argmax(traffic_idx, dim=0))
+        loss = self.mi_loss_fn(pred[0], torch.argmax(traffic_idx, dim=0))
         (loss / max_features).backward()
 
         if i % max_features == 0:
             self.mi_optimizer.step()
             self.mi_optimizer.zero_grad()
+
 
 
 
