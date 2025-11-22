@@ -20,7 +20,7 @@ def save_checkpoint(actor, subdir):
     torch.save(checkpoint, checkpoint_path)
     print(f'Checkpoint saved to {checkpoint_path}')
 
-# 定义一个函数来加载checkpoint
+
 def load_checkpoint(actor, attack_model, subdir, iteration, device):
     checkpoint_dir = './checkpoint'
     checkpoint_path = os.path.join(checkpoint_dir,f'{subdir}_checkpoint_{iteration}.pth')
@@ -81,7 +81,7 @@ def LoadGoodSampleCW(limits):
 def LoadGoodSampleTestCW():
     print("Loading non-defended Dataset for closed-world scenario" )
     # Point to the directory storing data
-    dataset_dir = '/home/xg/wwwr/dataset/Nodef/'
+    dataset_dir = '.'
 
     # X represents a sequence of traffic directions
     # y represents a sequence of corresponding label (website's label)
@@ -110,8 +110,8 @@ class MyDataset():
         return len(self.data)
 
     def __getitem__(self, idx):
-        x = torch.FloatTensor(self.data[idx])  # 转换为PyTorch的张量
-        y = torch.LongTensor(self.labels[idx])  # 转换为PyTorch的标签张量
+        x = torch.FloatTensor(self.data[idx])  
+        y = torch.LongTensor(self.labels[idx])  
         return x, y
 
 
@@ -130,3 +130,4 @@ class WholeDatasetIterator:
             return item
         else:
             raise StopIteration
+
