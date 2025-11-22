@@ -37,7 +37,7 @@ This project provides a pre-configured Docker environment hosted on Alibaba Clou
 ### 1. Pull the Image
 ```bash
 docker pull [crpi-banfsdbmslxf7z93.cn-hangzhou.personal.cr.aliyuncs.com/pytorch-wf/wf-pytorch:v1.0](https://crpi-banfsdbmslxf7z93.cn-hangzhou.personal.cr.aliyuncs.com/pytorch-wf/wf-pytorch:v1.0)
-
+```
 
 ## Quick Start
 
