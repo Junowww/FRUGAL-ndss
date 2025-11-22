@@ -1,5 +1,8 @@
 # FRUGAL
 
+[![DOI](https://zenodo.org/badge/1084810956.svg)](https://doi.org/10.5281/zenodo.17677722)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Project Structure
 
 ```
