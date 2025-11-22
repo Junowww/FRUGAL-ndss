@@ -28,13 +28,13 @@ FRUGAL-master/
 
 ## Installation
 
-conda env create -f mut_info.yaml
+conda env create -f mut_info.yaml, or we provide an Alibaba Cloud repository for Docker images below.
 
 ## Docker Usage
 
 This project provides a pre-configured Docker environment hosted on Alibaba Cloud Registry (optimized for users in China).
 
-### 1. Pull the Image
+### Pull the Image
 ```bash
 docker pull [crpi-banfsdbmslxf7z93.cn-hangzhou.personal.cr.aliyuncs.com/pytorch-wf/wf-pytorch:v1.0](https://crpi-banfsdbmslxf7z93.cn-hangzhou.personal.cr.aliyuncs.com/pytorch-wf/wf-pytorch:v1.0)
 ```
