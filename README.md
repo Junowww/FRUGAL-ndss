@@ -76,3 +76,13 @@ python cw_df_test_sac.py --attack_model DF --subdir date-test --bwo_para 0.3
 - `--limits`: Number of training samples per class
 - `--bwo_para`: Bandwidth overhead parameter 
 - `--nb_classes`: Number of website classes
+
+## Dataset
+
+We gratefully acknowledge the authors of [1] for making the Deep Fingerprinting dataset publicly available. This dataset comprises 95 monitored websites with 1,000 traces each for closed-world analysis, and a distinct set of 40,000 unmonitored websites (one trace each) for open-world evaluation.
+
+## References
+
+[1] Sirinam P, et al. "Deep fingerprinting: Undermining website fingerprinting defenses with deep learning".
+
+
