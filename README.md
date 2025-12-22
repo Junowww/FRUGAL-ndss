@@ -17,10 +17,7 @@ FRUGAL-master/
 ├── utility.py               # Utility functions
 ├── models/                  # Attack model implementations
 │   ├── DF.py               
-│   ├── TF.py               
-│   ├── AWF.py              
-│   ├── NetCLR.py           
-│   └── VarCNN.py           
+│   ├── ……           
 ├── dataset/                 # Dataset files
 ├── checkpoint/              # Training checkpoints
 └── saved_trained_models/    # Pre-trained models
