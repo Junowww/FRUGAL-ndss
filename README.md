@@ -69,7 +69,7 @@ python cw_df_test_sac.py --attack_model DF --subdir date-test --bwo_para 0.3
 ### Training Parameters
 - `--device`: Computing device (cpu, cuda:0, cuda:1)
 - `--subdir`: Experiment name
-- `--attack_model`: Target attack model (DF, TF, AWF, NetCLR, VarCNN)
+- `--attack_model`: Target attack model (DF, TF, AWF, NetCLR, VarCNN, RF)
 - `--limits`: Number of training samples per class
 - `--bwo_para`: Bandwidth overhead parameter 
 - `--nb_classes`: Number of website classes
@@ -77,6 +77,8 @@ python cw_df_test_sac.py --attack_model DF --subdir date-test --bwo_para 0.3
 ## Dataset
 
 We gratefully acknowledge the authors of [1] for making the Deep Fingerprinting dataset publicly available. This dataset comprises 95 monitored websites with 1,000 traces each for closed-world analysis, and a distinct set of 40,000 unmonitored websites (one trace each) for open-world evaluation.
+
+`GoodSample`: A subset of $n$ samples selected from the training set where the DF ASR exceeds 0.9.
 
 ## References
 
